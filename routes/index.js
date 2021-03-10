@@ -84,45 +84,88 @@ router.post('/add', async (req, res) => {
 //Add new album art to the server
 router.post('/addArt', async (req, res) => {
   try {
-    let trackFile = req.files.art;
-    let trackDir = "./public/art/";
+    if (req.body.type == 0) {
+      let trackFile = req.files.art;
+      let trackDir = "./public/art/";
 
-    if (!fs.existsSync(trackDir)) {
-      fs.mkdirSync(
-        trackDir, {
-          recursive: true,
-        },
-        (err) => {
-          if (err) throw err;
-        }
-      );
-    }
-    if (trackFile) {
-      let ext = path.extname(trackFile.name);
-      let fileLocation = `./art/myArt${ext}`;
-      let filePath = `${trackDir}myArt${ext}`;
-      await trackFile.mv(filePath);
+      if (!fs.existsSync(trackDir)) {
+        fs.mkdirSync(
+          trackDir, {
+            recursive: true,
+          },
+          (err) => {
+            if (err) throw err;
+          }
+        );
+      }
+      if (trackFile) {
+        let ext = path.extname(trackFile.name);
+        let fileLocation = `./art/myBanner${ext}`;
+        let filePath = `${trackDir}myBanner${ext}`;
+        await trackFile.mv(filePath);
 
-      /* const trackObject = new fileModel({
-        fileName: trackFile.name,
-        filePath: fileLocation,
-        ext: ext,
-        fileSize: trackFile.size,
-        fileMimetype: trackFile.mimetype,
-        fileMd5: trackFile.md5,
-        hits: 0
-      });
-      await trackObject.save(); */
+        /* const trackObject = new fileModel({
+          fileName: trackFile.name,
+          filePath: fileLocation,
+          ext: ext,
+          fileSize: trackFile.size,
+          fileMimetype: trackFile.mimetype,
+          fileMd5: trackFile.md5,
+          hits: 0
+        });
+        await trackObject.save(); */
 
-      res.json({
-        status: true,
-        result: `${process.env.MY_HOST}${fileLocation}`
-      });
+        res.json({
+          status: true,
+          result: `${process.env.MY_HOST}${fileLocation}`
+        });
+      } else {
+        res.json({
+          status: false,
+          message: 'File not found'
+        });
+      }
     } else {
-      res.json({
-        status: false,
-        message: 'File not found'
-      });
+      let trackFile = req.files.art;
+      let trackDir = "./public/art/";
+
+      if (!fs.existsSync(trackDir)) {
+        fs.mkdirSync(
+          trackDir, {
+            recursive: true,
+          },
+          (err) => {
+            if (err) throw err;
+          }
+        );
+      }
+      if (trackFile) {
+        let ext = path.extname(trackFile.name);
+        let fileLocation = `./art/myArt${ext}`;
+        let filePath = `${trackDir}myArt${ext}`;
+        await trackFile.mv(filePath);
+
+        /* const trackObject = new fileModel({
+          fileName: trackFile.name,
+          filePath: fileLocation,
+          ext: ext,
+          fileSize: trackFile.size,
+          fileMimetype: trackFile.mimetype,
+          fileMd5: trackFile.md5,
+          hits: 0
+        });
+        await trackObject.save(); */
+
+        res.json({
+          status: true,
+          result: `${process.env.MY_HOST}${fileLocation}`
+        });
+      } else {
+        res.json({
+          status: false,
+          message: 'File not found'
+        });
+      }
     }
   } catch (e) {
     console.log(e);
