@@ -82,35 +82,18 @@
     </div>
 
     <div class="mt-5">
-        <h5 class="card-title">Playlist Stats</h5>
+        <h5 class="card-title">Mix Song Stats</h5>
         <table class="table table-bordered ">
             <thead>
                 <tr>
                     <th scope="col">#</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Playlist Name</th>
+                    <th scope="col">Date Uploaded</th>
+                    <th scope="col">File Name</th>
                     <th scope="col">View Count</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                </tr>
-                <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                </tr>
-                <tr>
-                    <th scope="row">3</th>
-                    <td>Larry</td>
-                    <td>the Bird</td>
-                    <td>@twitter</td>
-                </tr>
+            <tbody id="stats-tbody">
+
             </tbody>
         </table>
     </div>
@@ -120,11 +103,24 @@
 
 <script>
     fetch('http://localhost:3009/hits').then(response => response.json())
-        .then(data => console.log(data));
+        .then(data => {
+            if (data.status) {
+                console.log(data)
+                let rows = data.result.map((item, index) => {
+                    return `<tr>
+                    <th scope="row">${index + 1}</th>
+                    <td>${new Date(item.createdAt).toDateString()}</td>
+                    <td>${item.fileName}</td>
+                    <td>${item.hits}</td>
+                </tr>`
+                })
+                $('#stats-tbody').html(rows)
+            }
+        });
 
     let mixFile;
     let bannerFile;
-    let setAlbumArtFile;
+    let albumArtFile;
     function setMixFile(file) {
         let extArr = file.name.split('.');
         if (file.type == 'audio/mpeg' && extArr[extArr.length - 1] == 'mp3') {
@@ -151,7 +147,7 @@
         console.log(file)
         let extArr = file.name.split('.');
         if (file.type == 'image/jpeg' && extArr[extArr.length - 1] == 'jpg') {
-            setAlbumArtFile = file;
+            albumArtFile = file;
             $('#album-art-info').html(file.name)
         } else {
             $('.toast-body').html('Invalid file. Only JPG files are supported')
@@ -175,46 +171,34 @@
     }
     function uploadBanner() {
         const fd = new FormData();
-        fd.append("track", mixFile)
+        fd.append("art", bannerFile)
+        fd.append("type", "0")
         const req = new XMLHttpRequest();
-        req.open('POST', 'http://localhost:3009/uploadBanner');
+        req.open('POST', 'http://localhost:3009/addArt');
         req.responseType = 'json'
         req.send(fd);
         req.onload = () => {
             console.log(req.response);
             $('.toast-body').html('Banner uploaded successfully')
             $('.toast').toast('show', { delay: 5000 });
-            mixFile = null;
+            bannerFile = null;
             $('#banner-info').html('')
         }
     }
-    function uploadBanner() {
-        const fd = new FormData();
-        fd.append("track", mixFile)
-        const req = new XMLHttpRequest();
-        req.open('POST', 'http://localhost:3009/uploadBanner');
-        req.responseType = 'json'
-        req.send(fd);
-        req.onload = () => {
-            console.log(req.response);
-            $('.toast-body').html('Banner uploaded successfully')
-            $('.toast').toast('show', { delay: 5000 });
-            mixFile = null;
-            $('#banner-info').html('')
-        }
-    }
+
     function uploadAlbumArt() {
         const fd = new FormData();
-        fd.append("track", mixFile)
+        fd.append("art", albumArtFile)
+        fd.append("type", "1")
         const req = new XMLHttpRequest();
-        req.open('POST', 'http://localhost:3009/uploadAlbumArt');
+        req.open('POST', 'http://localhost:3009/addArt');
         req.responseType = 'json'
         req.send(fd);
         req.onload = () => {
             console.log(req.response);
             $('.toast-body').html('Album art uploaded successfully')
             $('.toast').toast('show', { delay: 5000 });
-            mixFile = null;
+            albumArtFile = null;
             $('#album-art-info').html('')
         }
     }
