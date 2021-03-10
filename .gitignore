@@ -111,6 +111,7 @@ keys/firebase.json
 
 public/tracks/
 public/images/
+public/art/
 
 
 package-lock.json

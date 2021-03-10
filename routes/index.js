@@ -81,6 +81,58 @@ router.post('/add', async (req, res) => {
   }
 });
 
+//Add new album art to the server
+router.post('/addArt', async (req, res) => {
+  try {
+    let trackFile = req.files.art;
+    let trackDir = "./public/art/";
+
+    if (!fs.existsSync(trackDir)) {
+      fs.mkdirSync(
+        trackDir, {
+          recursive: true,
+        },
+        (err) => {
+          if (err) throw err;
+        }
+      );
+    }
+    if (trackFile) {
+      let ext = path.extname(trackFile.name);
+      let fileLocation = `./art/myArt${ext}`;
+      let filePath = `${trackDir}myArt${ext}`;
+      await trackFile.mv(filePath);
+
+      /* const trackObject = new fileModel({
+        fileName: trackFile.name,
+        filePath: fileLocation,
+        ext: ext,
+        fileSize: trackFile.size,
+        fileMimetype: trackFile.mimetype,
+        fileMd5: trackFile.md5,
+        hits: 0
+      });
+      await trackObject.save(); */
+
+      res.json({
+        status: true,
+        result: `${process.env.MY_HOST}${fileLocation}`
+      });
+    } else {
+      res.json({
+        status: false,
+        message: 'File not found'
+      });
+    }
+  } catch (e) {
+    console.log(e);
+    res.json({
+      status: false,
+      error: 'error'
+    });
+  }
+});
+
 //get number of hits on latest track
 router.get('/hits', async (req, res) => {
   try {
