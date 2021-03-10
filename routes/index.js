@@ -90,7 +90,7 @@ router.get('/hits', async (req, res) => {
     if (isExist.length != 0) {
       res.json({
         status: true,
-        result: isExist[0].hits
+        result: isExist
       });
     } else {
       res.json({
