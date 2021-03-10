@@ -1,3 +1,22 @@
+<div aria-live="assertive" aria-atomic="true" style="position: relative; min-height: 100px;">
+    <div class="toast" style="position: absolute; top: 0; right: 0;" data-delay="5000">
+        <div class="toast-header">
+            <strong class="mr-auto">Info</strong>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="toast-body">
+
+        </div>
+    </div>
+</div>
+<div style="display: none;" class="alert alert-warning alert-dismissible fade show" role="alert">
+
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
 <div class="container mt-3">
     <div class="row">
         <div class="col-lg-4 col-sm-12">
@@ -6,13 +25,17 @@
                     <h5 class="card-title">Update Mix song</h5>
                     <div class="input-group">
                         <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="inputGroupFile04">
-                            <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+                            <input type="file" onchange="setMixFile(this.files[0])" name="mixFile"
+                                class="custom-file-input" id="mix-file">
+                            <label class="custom-file-label" for="mix-file">Choose file</label>
                         </div>
                         <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button">Upload</button>
+                            <button class="btn btn-outline-secondary" onclick="uploadMix()"
+                                type="button">Upload</button>
                         </div>
                     </div>
+                    <small id="mix-song-info" class="form-text text-muted d-block"></small>
+                    <small class="form-text text-muted d-block">Suported files: <code>.mp3</code></small>
                 </div>
             </div>
         </div>
@@ -22,13 +45,16 @@
                     <h5 class="card-title">Update Banner</h5>
                     <div class="input-group">
                         <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="inputGroupFile04">
+                            <input type="file" onchange="setBannerFile(this.files[0])" class="custom-file-input"
+                                id="inputGroupFile04">
                             <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
                         </div>
                         <div class="input-group-append">
                             <button class="btn btn-outline-secondary" type="button">Upload</button>
                         </div>
                     </div>
+                    <small id="banner-info" class="form-text text-muted d-block"></small>
+                    <small class="form-text text-muted d-block">Suported files: <code>.jpg</code></small>
                 </div>
             </div>
         </div>
@@ -45,6 +71,8 @@
                             <button class="btn btn-outline-secondary" type="button">Upload</button>
                         </div>
                     </div>
+                    <small id="album-art-info" class="form-text text-muted d-block"></small>
+                    <small class="form-text text-muted d-block">Suported files: <code>.jpg</code></small>
                 </div>
             </div>
         </div>
@@ -85,3 +113,49 @@
     </div>
 
 </div>
+
+
+<script>
+    fetch('http://localhost:3009/hits').then(response => response.json())
+        .then(data => console.log(data));
+
+    let mixFile;
+    let bannerFile;
+    function setMixFile(file) {
+        let extArr = file.name.split('.');
+        if (file.type == 'audio/mpeg' && extArr[extArr.length - 1] == 'mp3') {
+            mixFile = file;
+            $('#mix-song-info').html(file.name)
+        } else {
+            $('.toast-body').html('Invalid file. Only MP3 files are supported')
+            $('.toast').toast('show', { delay: 5000 })
+        }
+
+    }
+    function setBannerFile(file) {
+        let extArr = file.name.split('.');
+        if (file.type == 'audio/mpeg' && extArr[extArr.length - 1] == 'jpg') {
+            mixFile = file;
+            $('#banner-info').html(file.name)
+        } else {
+            $('.toast-body').html('Invalid file. Only JPG files are supported')
+            $('.toast').toast('show', { delay: 5000 })
+        }
+    }
+    function uploadMix() {
+        const fd = new FormData();
+        fd.append("track", mixFile)
+        const req = new XMLHttpRequest();
+        req.open('POST', 'http://localhost:3009/add');
+        req.responseType = 'json'
+        req.send(fd);
+        req.onload = () => {
+            console.log(req.response);
+            $('.toast-body').html('Mix song uploaded successfully')
+            $('.toast').toast('show', { delay: 5000 });
+            mixFile = null;
+            $('#mix-song-info').html('')
+        }
+    }
+
+</script>
