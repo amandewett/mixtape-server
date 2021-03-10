@@ -55,7 +55,7 @@
                         </div>
                     </div>
                     <small id="banner-info" class="form-text text-muted d-block"></small>
-                    <small class="form-text text-muted d-block">Suported files: <code>.jpg</code></small>
+                    <small class="form-text text-muted d-block">Suported files: <code>.jpg, .png</code></small>
                 </div>
             </div>
         </div>
@@ -75,7 +75,7 @@
                         </div>
                     </div>
                     <small id="album-art-info" class="form-text text-muted d-block"></small>
-                    <small class="form-text text-muted d-block">Suported files: <code>.jpg</code></small>
+                    <small class="form-text text-muted d-block">Suported files: <code>.jpg, .png</code></small>
                 </div>
             </div>
         </div>
@@ -135,8 +135,8 @@
     function setBannerFile(file) {
         console.log(file)
         let extArr = file.name.split('.');
-        if (file.type == 'image/jpeg' && extArr[extArr.length - 1] == 'jpg') {
-            mixFile = file;
+        if ((file.type == 'image/jpeg' || file.type == 'image/png') && (extArr[extArr.length - 1] == 'jpg' || extArr[extArr.length - 1] == 'png')) {
+            bannerFile = file;
             $('#banner-info').html(file.name)
         } else {
             $('.toast-body').html('Invalid file. Only JPG files are supported')
@@ -146,7 +146,7 @@
     function setAlbumArtFile(file) {
         console.log(file)
         let extArr = file.name.split('.');
-        if (file.type == 'image/jpeg' && extArr[extArr.length - 1] == 'jpg') {
+        if ((file.type == 'image/jpeg' || file.type == 'image/png') && (extArr[extArr.length - 1] == 'jpg' || extArr[extArr.length - 1] == 'png')) {
             albumArtFile = file;
             $('#album-art-info').html(file.name)
         } else {
@@ -163,10 +163,15 @@
         req.send(fd);
         req.onload = () => {
             console.log(req.response);
-            $('.toast-body').html('Mix song uploaded successfully')
-            $('.toast').toast('show', { delay: 5000 });
-            mixFile = null;
-            $('#mix-song-info').html('')
+            if (req.response.status) {
+                $('.toast-body').html('Mix song uploaded successfully')
+                $('.toast').toast('show', { delay: 5000 });
+                mixFile = null;
+                $('#mix-song-info').html('')
+            } else {
+                $('.toast-body').html('Something went wrong!')
+            }
+
         }
     }
     function uploadBanner() {
@@ -179,10 +184,15 @@
         req.send(fd);
         req.onload = () => {
             console.log(req.response);
-            $('.toast-body').html('Banner uploaded successfully')
-            $('.toast').toast('show', { delay: 5000 });
-            bannerFile = null;
-            $('#banner-info').html('')
+            if (req.response.status) {
+                $('.toast-body').html('Banner uploaded successfully')
+                $('.toast').toast('show', { delay: 5000 });
+                bannerFile = null;
+                $('#banner-info').html('')
+            } else {
+                $('.toast-body').html('Something went wrong!')
+            }
+
         }
     }
 
@@ -196,10 +206,15 @@
         req.send(fd);
         req.onload = () => {
             console.log(req.response);
-            $('.toast-body').html('Album art uploaded successfully')
-            $('.toast').toast('show', { delay: 5000 });
-            albumArtFile = null;
-            $('#album-art-info').html('')
+            if (req.response.status) {
+                $('.toast-body').html('Album art uploaded successfully')
+                $('.toast').toast('show', { delay: 5000 });
+                albumArtFile = null;
+                $('#album-art-info').html('')
+            } else {
+                $('.toast-body').html('Something went wrong!')
+            }
+
         }
     }
 
