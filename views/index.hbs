@@ -50,7 +50,8 @@
                             <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
                         </div>
                         <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button">Upload</button>
+                            <button class="btn btn-outline-secondary" onclick="uploadBanner()"
+                                type="button">Upload</button>
                         </div>
                     </div>
                     <small id="banner-info" class="form-text text-muted d-block"></small>
@@ -64,11 +65,13 @@
                     <h5 class="card-title">Update Album Art</h5>
                     <div class="input-group">
                         <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="inputGroupFile04">
+                            <input type="file" onchange="setAlbumArtFile(this.files[0])" class="custom-file-input"
+                                id="inputGroupFile04">
                             <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
                         </div>
                         <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button">Upload</button>
+                            <button class="btn btn-outline-secondary" onclick="uploadAlbumArt()"
+                                type="button">Upload</button>
                         </div>
                     </div>
                     <small id="album-art-info" class="form-text text-muted d-block"></small>
@@ -121,6 +124,7 @@
 
     let mixFile;
     let bannerFile;
+    let setAlbumArtFile;
     function setMixFile(file) {
         let extArr = file.name.split('.');
         if (file.type == 'audio/mpeg' && extArr[extArr.length - 1] == 'mp3') {
@@ -133,10 +137,22 @@
 
     }
     function setBannerFile(file) {
+        console.log(file)
         let extArr = file.name.split('.');
-        if (file.type == 'audio/mpeg' && extArr[extArr.length - 1] == 'jpg') {
+        if (file.type == 'image/jpeg' && extArr[extArr.length - 1] == 'jpg') {
             mixFile = file;
             $('#banner-info').html(file.name)
+        } else {
+            $('.toast-body').html('Invalid file. Only JPG files are supported')
+            $('.toast').toast('show', { delay: 5000 })
+        }
+    }
+    function setAlbumArtFile(file) {
+        console.log(file)
+        let extArr = file.name.split('.');
+        if (file.type == 'image/jpeg' && extArr[extArr.length - 1] == 'jpg') {
+            setAlbumArtFile = file;
+            $('#album-art-info').html(file.name)
         } else {
             $('.toast-body').html('Invalid file. Only JPG files are supported')
             $('.toast').toast('show', { delay: 5000 })
@@ -155,6 +171,51 @@
             $('.toast').toast('show', { delay: 5000 });
             mixFile = null;
             $('#mix-song-info').html('')
+        }
+    }
+    function uploadBanner() {
+        const fd = new FormData();
+        fd.append("track", mixFile)
+        const req = new XMLHttpRequest();
+        req.open('POST', 'http://localhost:3009/uploadBanner');
+        req.responseType = 'json'
+        req.send(fd);
+        req.onload = () => {
+            console.log(req.response);
+            $('.toast-body').html('Banner uploaded successfully')
+            $('.toast').toast('show', { delay: 5000 });
+            mixFile = null;
+            $('#banner-info').html('')
+        }
+    }
+    function uploadBanner() {
+        const fd = new FormData();
+        fd.append("track", mixFile)
+        const req = new XMLHttpRequest();
+        req.open('POST', 'http://localhost:3009/uploadBanner');
+        req.responseType = 'json'
+        req.send(fd);
+        req.onload = () => {
+            console.log(req.response);
+            $('.toast-body').html('Banner uploaded successfully')
+            $('.toast').toast('show', { delay: 5000 });
+            mixFile = null;
+            $('#banner-info').html('')
+        }
+    }
+    function uploadAlbumArt() {
+        const fd = new FormData();
+        fd.append("track", mixFile)
+        const req = new XMLHttpRequest();
+        req.open('POST', 'http://localhost:3009/uploadAlbumArt');
+        req.responseType = 'json'
+        req.send(fd);
+        req.onload = () => {
+            console.log(req.response);
+            $('.toast-body').html('Album art uploaded successfully')
+            $('.toast').toast('show', { delay: 5000 });
+            mixFile = null;
+            $('#album-art-info').html('')
         }
     }
 
