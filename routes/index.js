@@ -82,7 +82,7 @@ router.post('/add', async (req, res) => {
 });
 
 //get number of hits on latest track
-router.get('/getHits', async (req, res) => {
+router.get('/hits', async (req, res) => {
   try {
     let isExist = await fileModel.find().lean().sort({
       "createdAt": -1
@@ -98,7 +98,6 @@ router.get('/getHits', async (req, res) => {
         message: 'Database empty'
       });
     }
-
   } catch (e) {
     console.log(e);
     res.json({
