@@ -99,7 +99,8 @@ router.post('/addArt', async (req, res) => {
         );
       }
       if (trackFile) {
-        let ext = path.extname(trackFile.name);
+        // let ext = path.extname(trackFile.name);
+        let ext = '.jpg';
         let fileLocation = `./art/myBanner${ext}`;
         let filePath = `${trackDir}myBanner${ext}`;
         await trackFile.mv(filePath);
@@ -140,7 +141,8 @@ router.post('/addArt', async (req, res) => {
         );
       }
       if (trackFile) {
-        let ext = path.extname(trackFile.name);
+        // let ext = path.extname(trackFile.name);
+        let ext = '.jpg';
         let fileLocation = `./art/myArt${ext}`;
         let filePath = `${trackDir}myArt${ext}`;
         await trackFile.mv(filePath);
