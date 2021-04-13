@@ -5,7 +5,7 @@ var commandLineArgs = require('command-line-args');
 const options = commandLineArgs([{
     name: 'env',
     alias: 'e',
-    defaultValue: 'development',
+    defaultValue: 'production',
     type: String,
 }, ]);
 
